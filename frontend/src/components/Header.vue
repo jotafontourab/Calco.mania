@@ -1,15 +1,8 @@
 <script setup>
 import { useCart } from '../composables/useCart'
 
-const { totalItems, generateWhatsappLink } = useCart()
-
-const checkout = () => {
-  if (totalItems.value > 0) {
-    window.open(generateWhatsappLink(), '_blank')
-  } else {
-    alert('Sua cuia está vazia! Adicione alguns adesivos primeiro.')
-  }
-}
+const { totalItems } = useCart()
+const emit = defineEmits(['toggle-cart'])
 </script>
 
 <template>
@@ -21,7 +14,7 @@ const checkout = () => {
       </div>
       <nav class="nav">
         <RouterLink to="/" class="nav-link">Coleções</RouterLink>
-        <button class="btn-cuia" @click="checkout">
+        <button class="btn-cuia" @click="emit('toggle-cart')">
           <span class="cuia-icon">🧉</span> Minha Cuia ({{ totalItems }})
         </button>
       </nav>

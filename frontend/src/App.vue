@@ -1,12 +1,38 @@
 <script setup>
+import { ref } from 'vue'
 import { RouterView } from 'vue-router'
 import Header from './components/Header.vue'
+import CartModal from './components/CartModal.vue'
+
+const isCartOpen = ref(false)
+
+const toggleCart = () => {
+  isCartOpen.value = !isCartOpen.value
+}
 </script>
 
 <template>
-  <Header />
+  <Header @toggle-cart="toggleCart" />
+  
   <RouterView />
+  
+  <CartModal :isOpen="isCartOpen" @close="isCartOpen = false" />
 </template>
 
-<style scoped>
+<style>
+/* Global styles */
+:root {
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
