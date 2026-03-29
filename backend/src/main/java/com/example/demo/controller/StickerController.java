@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/stickers")
+@CrossOrigin(origins = "*")
 public class StickerController {
     
     private final StickerService stickerService;

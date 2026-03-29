@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/gallery")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class SocialPostController {
 
     private final SocialPostRepository socialPostRepository;

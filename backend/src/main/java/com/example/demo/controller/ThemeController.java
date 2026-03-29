@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/themes")
+@CrossOrigin(origins = "*")
 public class ThemeController {
     
     private final ThemeService themeService;
