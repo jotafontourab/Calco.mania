@@ -20,8 +20,8 @@ public class CloudinaryMigrationRunner implements CommandLineRunner {
     private final StickerRepository stickerRepository;
     private final CloudinaryService cloudinaryService;
 
-    // Adjust this path if necessary to point to your frontend public folder
-    private static final String STICKERS_PATH = "C:/Users/joao/Desktop/novoprojeto/frontend/public/stickers/";
+    // Path to your frontend public folder (relative to the backend root)
+    private static final String STICKERS_PATH = "../frontend/public/stickers/";
 
     public CloudinaryMigrationRunner(StickerRepository stickerRepository, CloudinaryService cloudinaryService) {
         this.stickerRepository = stickerRepository;
