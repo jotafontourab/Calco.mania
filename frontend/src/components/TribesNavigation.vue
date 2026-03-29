@@ -31,7 +31,7 @@ onMounted(fetchThemes)
 </script>
 
 <template>
-  <section class="tribes-section">
+  <section id="tribes-section" class="tribes-section">
     <div class="container">
       <div class="section-header">
         <h2>Explore Nossos Temas</h2>

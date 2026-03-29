@@ -1,12 +1,17 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useCart } from '../composables/useCart'
+import { useQuickView } from '../composables/useQuickView'
 
 const props = defineProps(['themeId'])
 const { addToCart } = useCart()
+const { openQuickView } = useQuickView()
 
 const products = ref([])
 const loading = ref(true)
+const displayLimit = ref(0) // 0 means all
+
+const isMobile = () => window.innerWidth < 768
 
 const fetchProducts = async () => {
   loading.value = true
@@ -25,11 +30,24 @@ const fetchProducts = async () => {
   }
 }
 
+const displayedProducts = computed(() => {
+  if (displayLimit.value === 0) return products.value
+  return products.value.slice(0, displayLimit.value)
+})
+
 const handleAdd = (product) => {
   addToCart(product)
 }
 
-onMounted(fetchProducts)
+onMounted(() => {
+  fetchProducts()
+  // Set default limit based on device
+  if (isMobile()) {
+    displayLimit.value = 5
+  } else {
+    displayLimit.value = 0
+  }
+})
 
 // Re-fetch when theme changes
 watch(() => props.themeId, fetchProducts)
@@ -40,7 +58,19 @@ watch(() => props.themeId, fetchProducts)
     <div class="container">
       <div class="section-header">
         <h2>{{ themeId ? 'Filtrando por Temas' : 'Últimos Lançamentos' }}</h2>
-        <p>Adesivos premium, resistentes à água, ao tempo e à sua térmica.</p>
+        <div class="header-controls">
+          <p>Adesivos premium, resistentes à água, ao tempo e à sua térmica.</p>
+          
+          <div class="limit-selector" v-if="products.length > 0">
+            <label for="limit">Mostrar:</label>
+            <select id="limit" v-model="displayLimit">
+              <option :value="5">5 stickers</option>
+              <option :value="10">10 stickers</option>
+              <option :value="20">20 stickers</option>
+              <option :value="0">Mostrar Todos ({{ products.length }})</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <div v-if="loading" class="loading">Buscando stickers...</div>
@@ -50,11 +80,14 @@ watch(() => props.themeId, fetchProducts)
       </div>
 
       <div v-else class="products-grid">
-        <div v-for="product in products" :key="product.id" class="product-card">
-          <div class="product-image">
+        <div v-for="product in displayedProducts" :key="product.id" class="product-card">
+          <div class="product-image" @click="openQuickView(product)">
             <img v-if="product.imageUrl" :src="product.imageUrl" :alt="product.name" />
             <div v-else class="product-image-placeholder">
               <span>Sticker Preview</span>
+            </div>
+            <div class="product-image-overlay">
+              <span>Espiar Sticker</span>
             </div>
           </div>
           <div class="product-info">
@@ -81,9 +114,43 @@ watch(() => props.themeId, fetchProducts)
   text-align: center;
   margin-bottom: 48px;
 }
+.header-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+.limit-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-white);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.875rem;
+}
+.limit-selector select {
+  border: 1px solid var(--color-cream-dark);
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: white;
+  color: var(--color-forest-dark);
+  font-weight: 500;
+  cursor: pointer;
+}
 .section-header p {
   color: var(--color-forest-base);
   font-size: 1.125rem;
+}
+@media (max-width: 640px) {
+  .section-header h2 {
+    font-size: 1.75rem;
+  }
+  .section-header p {
+    font-size: 1rem;
+  }
 }
 .loading, .no-products {
   text-align: center;
@@ -112,6 +179,8 @@ watch(() => props.themeId, fetchProducts)
   background-color: var(--color-cream-dark);
   border-bottom: 1px solid var(--color-cream);
   overflow: hidden;
+  position: relative;
+  cursor: pointer;
 }
 .product-image img {
   width: 100%;
@@ -121,6 +190,37 @@ watch(() => props.themeId, fetchProducts)
 }
 .product-card:hover .product-image img {
   transform: scale(1.1);
+}
+.product-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 28, 21, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+.product-image-overlay span {
+  color: var(--color-white);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  border: 2px solid var(--color-white);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transform: translateY(10px);
+  transition: transform var(--transition-normal);
+}
+.product-image:hover .product-image-overlay {
+  opacity: 1;
+}
+.product-image:hover .product-image-overlay span {
+  transform: translateY(0);
 }
 .product-image-placeholder {
   height: 100%;

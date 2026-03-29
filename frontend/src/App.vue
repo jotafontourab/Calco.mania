@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { RouterView } from 'vue-router'
 import Header from './components/Header.vue'
 import CartModal from './components/CartModal.vue'
+import QuickViewModal from './components/QuickViewModal.vue'
 
 const isCartOpen = ref(false)
 
@@ -17,6 +18,7 @@ const toggleCart = () => {
   <RouterView />
   
   <CartModal :isOpen="isCartOpen" @close="isCartOpen = false" />
+  <QuickViewModal />
 </template>
 
 <style>

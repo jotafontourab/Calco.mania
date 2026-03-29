@@ -1,11 +1,13 @@
 <script setup>
 import { computed } from 'vue'
 import { useCart } from '../composables/useCart'
+import { useQuickView } from '../composables/useQuickView'
 
 const props = defineProps(['isOpen'])
 const emit = defineEmits(['close'])
 
-const { state, removeFromCart, total, generateWhatsappLink } = useCart()
+const { state, removeFromCart, updateQuantity, total, generateWhatsappLink } = useCart()
+const { openQuickView } = useQuickView()
 
 const isEmpty = computed(() => state.items.length === 0)
 
@@ -31,12 +33,17 @@ const handleCheckout = () => {
 
         <div v-else class="cart-items">
           <div v-for="item in state.items" :key="item.id" class="cart-item">
-            <div class="item-img">
+            <div class="item-img" @click="openQuickView(item)">
               <img :src="item.imageUrl || ''" :alt="item.name" />
             </div>
             <div class="item-details">
               <h4>{{ item.name }}</h4>
-              <p>Qtd: {{ item.quantity }} x R$ {{ item.price.toFixed(2) }}</p>
+              <div class="item-qty-selector">
+                <button class="qty-btn" @click="updateQuantity(item.id, -1)">-</button>
+                <span class="qty-value">{{ item.quantity }}</span>
+                <button class="qty-btn" @click="updateQuantity(item.id, 1)">+</button>
+                <span class="item-price-unit">x R$ {{ item.price.toFixed(2) }}</span>
+              </div>
             </div>
             <button class="remove-btn" @click="removeFromCart(item.id)">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
@@ -46,7 +53,12 @@ const handleCheckout = () => {
 
         <footer v-if="!isEmpty" class="modal-footer">
           <div class="total-section">
-            <span>Total:</span>
+            <div class="total-label">
+                <span>Total:</span>
+                <p v-if="state.items.reduce((s, i) => s + i.quantity, 0) >= 10" class="promo-badge">
+                  Promoção 10 por R$ 25 aplicada!
+                </p>
+            </div>
             <span class="total-price">R$ {{ total.toFixed(2) }}</span>
           </div>
           <button class="btn-primary w-full" @click="handleCheckout">
@@ -127,6 +139,12 @@ const handleCheckout = () => {
   background: var(--color-cream-dark);
   border-radius: var(--radius-sm);
   overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.item-img:hover {
+  transform: scale(1.05);
 }
 
 .item-img img {
@@ -141,7 +159,43 @@ const handleCheckout = () => {
 
 .item-details h4 {
   font-size: 1rem;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.item-qty-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qty-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-cream-dark);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.qty-btn:hover {
+  background: var(--color-forest-dark);
+  color: white;
+  border-color: var(--color-forest-dark);
+}
+
+.qty-value {
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.item-price-unit {
+  font-size: 0.825rem;
+  color: var(--color-forest-soft);
+  margin-left: 4px;
 }
 
 .remove-btn {
@@ -162,10 +216,25 @@ const handleCheckout = () => {
 .total-section {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 24px;
   color: var(--color-forest-dark);
+}
+
+.total-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.promo-badge {
+    font-size: 0.75rem;
+    color: #cc0000;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
 }
 
 .w-full {
