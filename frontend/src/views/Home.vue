@@ -9,6 +9,13 @@ const selectedThemeId = ref(null)
 
 const handleFilter = (themeId) => {
   selectedThemeId.value = themeId
+  // Smooth scroll to stickers on mobile/selection
+  setTimeout(() => {
+    const grid = document.getElementById('stickers-grid')
+    if (grid) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, 100)
 }
 </script>
 
@@ -16,7 +23,7 @@ const handleFilter = (themeId) => {
   <main>
     <Hero />
     <TribesNavigation @filter="handleFilter" :activeId="selectedThemeId" />
-    <ProductGrid :themeId="selectedThemeId" />
+    <ProductGrid :themeId="selectedThemeId" id="stickers-grid" />
     <SocialWall />
     
     <footer class="site-footer">

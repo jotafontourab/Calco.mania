@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface StickerRepository extends JpaRepository<Sticker, Long> {
     List<Sticker> findByThemeId(Long themeId);
     Optional<Sticker> findByImageUrl(String imageUrl);
+    Optional<Sticker> findByName(String name);
 }
