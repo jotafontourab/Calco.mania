@@ -6,7 +6,7 @@ const loading = ref(true)
 
 const fetchPosts = async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/gallery')
+    const response = await fetch((import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080') + '/api/gallery')
     if (response.ok) {
       posts.value = await response.json()
     }

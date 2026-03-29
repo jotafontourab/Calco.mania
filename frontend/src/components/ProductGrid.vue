@@ -16,7 +16,7 @@ const isMobile = () => window.innerWidth < 768
 const fetchProducts = async () => {
   loading.value = true
   try {
-    let url = 'http://localhost:8080/api/stickers'
+    let url = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080') + '/api/stickers'
     if (props.themeId) {
       url += `?themeId=${props.themeId}`
     }
