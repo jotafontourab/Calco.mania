@@ -61,6 +61,10 @@ watch(() => props.themeId, fetchProducts)
         <div class="header-controls">
           <p>Adesivos premium, resistentes à água, ao tempo e à sua térmica.</p>
           
+          <div class="header-promo">
+            <span class="badge-promo">🏷️ Oferta: 10 Stickers por R$ 25,00</span>
+          </div>
+          
           <div class="limit-selector" v-if="products.length > 0">
             <label for="limit">Mostrar:</label>
             <select id="limit" v-model="displayLimit">
@@ -143,6 +147,20 @@ watch(() => props.themeId, fetchProducts)
 .section-header p {
   color: var(--color-forest-base);
   font-size: 1.125rem;
+}
+.header-promo {
+  margin-top: 12px;
+}
+.badge-promo {
+  display: inline-block;
+  background-color: var(--color-forest-dark);
+  color: var(--color-cream);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.02em;
 }
 @media (max-width: 640px) {
   .section-header h2 {

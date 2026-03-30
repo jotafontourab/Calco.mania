@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { RouterView } from 'vue-router'
 import Header from './components/Header.vue'
+import AnnouncementBar from './components/AnnouncementBar.vue'
 import CartModal from './components/CartModal.vue'
 import QuickViewModal from './components/QuickViewModal.vue'
 
@@ -13,6 +14,7 @@ const toggleCart = () => {
 </script>
 
 <template>
+  <AnnouncementBar />
   <Header @toggle-cart="toggleCart" />
   
   <RouterView />

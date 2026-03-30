@@ -6,10 +6,17 @@ import { useQuickView } from '../composables/useQuickView'
 const props = defineProps(['isOpen'])
 const emit = defineEmits(['close'])
 
-const { state, removeFromCart, updateQuantity, total, generateWhatsappLink } = useCart()
+const { state, removeFromCart, updateQuantity, total, totalItems, generateWhatsappLink } = useCart()
 const { openQuickView } = useQuickView()
 
 const isEmpty = computed(() => state.items.length === 0)
+
+const itemsToNextPromo = computed(() => {
+  const currentCount = totalItems.value
+  if (currentCount === 0) return 0
+  const remainder = currentCount % 10
+  return remainder === 0 ? 0 : 10 - remainder
+})
 
 const handleCheckout = () => {
   const link = generateWhatsappLink()
@@ -55,8 +62,11 @@ const handleCheckout = () => {
           <div class="total-section">
             <div class="total-label">
                 <span>Total:</span>
-                <p v-if="state.items.reduce((s, i) => s + i.quantity, 0) >= 10" class="promo-badge">
+                <p v-if="totalItems >= 10" class="promo-badge">
                   Promoção 10 por R$ 25 aplicada!
+                </p>
+                <p v-else-if="itemsToNextPromo > 0" class="promo-hint">
+                  Adicione mais <strong>{{ itemsToNextPromo }}</strong> para o kit de 10 por R$ 25!
                 </p>
             </div>
             <span class="total-price">R$ {{ total.toFixed(2) }}</span>
@@ -230,11 +240,30 @@ const handleCheckout = () => {
 
 .promo-badge {
     font-size: 0.75rem;
-    color: #cc0000;
-    font-weight: 600;
+    color: var(--color-leaf);
+    background: var(--color-forest-dark);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-top: 4px;
+    margin-top: 6px;
+    display: inline-block;
+}
+
+.promo-hint {
+    font-size: 0.8125rem;
+    color: var(--color-forest-base);
+    font-weight: 500;
+    margin-top: 6px;
+    font-style: italic;
+}
+
+.promo-hint strong {
+    color: var(--color-leaf);
+    background: var(--color-forest-dark);
+    padding: 0 4px;
+    border-radius: 2px;
 }
 
 .w-full {
