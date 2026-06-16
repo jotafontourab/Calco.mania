@@ -4,8 +4,6 @@ Plataforma de e-commerce e catálogo digital para adesivos (stickers) focados na
 
 ## 🚀 Arquitetura e Tecnologias
 
-O projeto é dividido em um ecossistema moderno de backend e frontend:
-
 ### Backend
 - **Java 21** com **Spring Boot 3**
 - **Spring Security** (Configurado para CORS com Vercel)
